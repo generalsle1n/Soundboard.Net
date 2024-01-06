@@ -10,8 +10,8 @@
     <vm:MainViewModel />
   </Design.DataContext>
 	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		<TextBlock Text="{Binding CurrentPath}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		<TextBlock Text="{Binding CurrentAssembly}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 	</StackPanel>
-</UserControl>
+  </UserControl>
