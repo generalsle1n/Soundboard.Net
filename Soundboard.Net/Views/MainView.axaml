@@ -9,9 +9,10 @@
   <Design.DataContext>
     <vm:MainViewModel />
   </Design.DataContext>
-	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-	    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<TextBlock Text="{Binding CurrentPath}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<TextBlock Text="{Binding CurrentAssembly}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-	</StackPanel>
+	<Border HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="2" >
+		<WrapPanel x:Name="SoundAction">
+			
+		</WrapPanel>
+	</Border>
   </UserControl>
+
