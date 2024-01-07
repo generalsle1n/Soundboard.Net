@@ -16,7 +16,13 @@
 			</StackPanel>
 		</TabItem>
 		<TabItem Header="Settings">
-			
+			<StackPanel>
+				<WrapPanel>
+					<TextBlock Text="Output Device" VerticalAlignment="Center"/>
+					<ComboBox Margin="20" x:Name="OutPutDevices" SelectionChanged="ComboBox_SelectionChanged"/>
+					<Button Content="Reload Devices" Margin="20" Click="Button_Click"/>
+				</WrapPanel>
+			</StackPanel>
 		</TabItem>
 	</TabControl>
 	

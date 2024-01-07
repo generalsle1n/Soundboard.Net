@@ -1,8 +1,8 @@
-﻿using NAudio.Wave;
+﻿using NAudio.CoreAudioApi;
+using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using Soundboard.Net.Manager.Model;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Soundboard.Net.Manager
 {
@@ -10,6 +10,7 @@ namespace Soundboard.Net.Manager
 	{
 		private const string _soundFolderName = "Sounds";
 		private List<Sound> _allSounds = new List<Sound>();
+		private List<SoundOutputDevices> _allDevices = new List<SoundOutputDevices>();
 		private WaveOutEvent _output;
 		private MixingSampleProvider _mixer;
 		public SoundManager()
@@ -40,6 +41,12 @@ namespace Soundboard.Net.Manager
 			_mixer.ReadFully = true;
 			_output.Init(_mixer);
 			_output.Play();
+
+			_allDevices.Add(new SoundOutputDevices()
+			{
+				Name = "Default",
+				ID = "-1"
+			});
 		}
 		public async Task PlaySound(Sound Sound)
 		{
@@ -50,7 +57,37 @@ namespace Soundboard.Net.Manager
 		}
 		public async Task<IEnumerable<SoundOutputDevices>> GetOutputDevices()
 		{
-			return new List<SoundOutputDevices>();
+			using(MMDeviceEnumerator DeviceEnum = new MMDeviceEnumerator())
+			{
+				MMDeviceCollection AudioDevices = DeviceEnum.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active);
+				foreach(MMDevice Device in AudioDevices)
+				{
+					if(_allDevices.Where(SoundDevice => SoundDevice.ID.Equals(Device.ID)).Count() == 0)
+					{
+						_allDevices.Add(new SoundOutputDevices()
+						{
+							Name = Device.FriendlyName,
+							ID = Device.ID
+						});
+					}
+				}
+			}
+
+			return _allDevices;
+		}
+		public async Task ChangeOutputDevice(SoundOutputDevices Output)
+		{
+			_output.Dispose();
+			if (Output.ID.Equals("-1"))
+			{
+				_output.DeviceNumber = -1;
+			}
+			else
+			{
+				_output.DeviceNumber = _allDevices.FindIndex(device => device.ID.Equals(Output.ID)) -1;
+			}
+			_output.Init(_mixer);
+			_output.Play();
 		}
 	}
 }
