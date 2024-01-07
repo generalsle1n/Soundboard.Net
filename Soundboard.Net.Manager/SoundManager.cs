@@ -11,7 +11,7 @@ namespace Soundboard.Net.Manager
 		private const string _soundFolderName = "Sounds";
 		private List<Sound> _allSounds = new List<Sound>();
 		private List<SoundOutputDevices> _allDevices = new List<SoundOutputDevices>();
-		private WaveOutEvent _output;
+		private DirectSoundOut _output;
 		private MixingSampleProvider _mixer;
 		public SoundManager()
 		{
@@ -28,25 +28,21 @@ namespace Soundboard.Net.Manager
 				});
 			}
 
-			InitAudioEngine();
+			InitAudioEngine().Wait();
 		}
 		public IEnumerable<Sound> GetAllSounds()
 		{
 			return _allSounds;
 		}
-		private void InitAudioEngine()
+		private async Task InitAudioEngine()
 		{
-			_output = new WaveOutEvent();
+			await GetOutputDevices();
+			
+			_output = new DirectSoundOut(ExtractGuidFromSoundObject(GetDefaultDevice()));
 			_mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
 			_mixer.ReadFully = true;
 			_output.Init(_mixer);
 			_output.Play();
-
-			_allDevices.Add(new SoundOutputDevices()
-			{
-				Name = "Default",
-				ID = "-1"
-			});
 		}
 		public async Task PlaySound(Sound Sound)
 		{
@@ -59,15 +55,28 @@ namespace Soundboard.Net.Manager
 		{
 			using(MMDeviceEnumerator DeviceEnum = new MMDeviceEnumerator())
 			{
+
+				MMDevice DefaultDevice = DeviceEnum.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+				if(_allDevices.Where(SoundDevice => SoundDevice.ID.Equals(DefaultDevice.ID)).Count() == 0){
+					_allDevices.Add(new SoundOutputDevices()
+					{
+						Name = DefaultDevice.FriendlyName,
+						ID = DefaultDevice.ID,
+						IsDefault = true
+					});
+				}
+				
 				MMDeviceCollection AudioDevices = DeviceEnum.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active);
 				foreach(MMDevice Device in AudioDevices)
 				{
+					Device.GetPropertyInformation();
 					if(_allDevices.Where(SoundDevice => SoundDevice.ID.Equals(Device.ID)).Count() == 0)
 					{
 						_allDevices.Add(new SoundOutputDevices()
 						{
 							Name = Device.FriendlyName,
-							ID = Device.ID
+							ID = Device.ID,
+							IsDefault = false
 						});
 					}
 				}
@@ -78,16 +87,20 @@ namespace Soundboard.Net.Manager
 		public async Task ChangeOutputDevice(SoundOutputDevices Output)
 		{
 			_output.Dispose();
-			if (Output.ID.Equals("-1"))
-			{
-				_output.DeviceNumber = -1;
-			}
-			else
-			{
-				_output.DeviceNumber = _allDevices.FindIndex(device => device.ID.Equals(Output.ID)) -1;
-			}
+			_output = new DirectSoundOut(ExtractGuidFromSoundObject(Output));
 			_output.Init(_mixer);
 			_output.Play();
+		}
+		private Guid ExtractGuidFromSoundObject(SoundOutputDevices Device)
+		{
+			string DefaultGuid = Device.ID;
+			string PreparedGuid = DefaultGuid.Split(".")[4].Replace("{", "").Replace("}", "");
+			Guid Guid = Guid.Parse(PreparedGuid);
+			return Guid;
+		}
+		private SoundOutputDevices GetDefaultDevice()
+		{
+			return _allDevices.Where(Device => Device.IsDefault == true).First();
 		}
 	}
 }

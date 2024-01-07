@@ -10,6 +10,7 @@ namespace Soundboard.Net.Manager.Model
 	{
 		public string Name { get;set; }
 		public string ID { get;set; }
+		public bool IsDefault { get; set; }
 
 		public override string ToString()
 		{
