@@ -66,6 +66,9 @@ public partial class MainView : UserControl
 
 	private void ComboBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
 	{
-		Manager.ChangeOutputDevice((SoundOutputDevices)((ComboBox)sender).SelectedItem);
+		if(((ComboBox)sender).ItemCount != 0)
+		{
+			Manager.ChangeOutputDevice((SoundOutputDevices)((ComboBox)sender).SelectedItem);
+		}
 	}
 }
