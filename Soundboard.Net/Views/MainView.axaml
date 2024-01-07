@@ -9,10 +9,17 @@
   <Design.DataContext>
     <vm:MainViewModel />
   </Design.DataContext>
-	<Border HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="2" >
-		<WrapPanel x:Name="SoundAction">
+	<TabControl>
+		<TabItem Header="Sounds">
+			<StackPanel Spacing="100">
+				<WrapPanel x:Name="SoundAction"/>
+			</StackPanel>
+		</TabItem>
+		<TabItem Header="Settings">
 			
-		</WrapPanel>
-	</Border>
+		</TabItem>
+	</TabControl>
+	
+	
   </UserControl>
 
