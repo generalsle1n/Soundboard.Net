@@ -16,11 +16,15 @@
 			</StackPanel>
 		</TabItem>
 		<TabItem Header="Settings">
-			<StackPanel>
+			<StackPanel Spacing="-70">
 				<WrapPanel>
 					<TextBlock Text="Output Device" VerticalAlignment="Center"/>
 					<ComboBox Margin="20" x:Name="OutPutDevices" SelectionChanged="ComboBox_SelectionChanged"/>
 					<Button Content="Reload Devices" Margin="20" Click="Button_Click"/>
+				</WrapPanel>
+				<WrapPanel>
+					<TextBlock Text="Volume" VerticalAlignment="Center"/>
+					<Slider Margin="65" Minimum="0" Maximum="100" Width="205" HorizontalAlignment="Center" Value="{Binding VolumePercentage}" ValueChanged="Slider_ValueChanged"/>
 				</WrapPanel>
 			</StackPanel>
 		</TabItem>

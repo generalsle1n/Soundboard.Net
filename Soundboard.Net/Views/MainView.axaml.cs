@@ -71,4 +71,9 @@ public partial class MainView : UserControl
 			Manager.ChangeOutputDevice((SoundOutputDevices)((ComboBox)sender).SelectedItem);
 		}
 	}
+
+	private void Slider_ValueChanged(object? sender, Avalonia.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+	{
+		Manager.ChangeVolume(((Slider)sender).Value);
+	}
 }

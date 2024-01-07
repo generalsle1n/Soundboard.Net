@@ -6,4 +6,5 @@ namespace Soundboard.Net.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
+	public int VolumePercentage { get; set; } = 50;
 }

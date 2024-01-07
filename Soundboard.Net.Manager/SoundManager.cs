@@ -13,6 +13,7 @@ namespace Soundboard.Net.Manager
 		private List<SoundOutputDevices> _allDevices = new List<SoundOutputDevices>();
 		private DirectSoundOut _output;
 		private MixingSampleProvider _mixer;
+		private VolumeSampleProvider _volume;
 		public SoundManager()
 		{
 			string BinaryPath = Assembly.GetExecutingAssembly().Location;
@@ -41,7 +42,8 @@ namespace Soundboard.Net.Manager
 			_output = new DirectSoundOut(ExtractGuidFromSoundObject(GetDefaultDevice()));
 			_mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
 			_mixer.ReadFully = true;
-			_output.Init(_mixer);
+			_volume = new VolumeSampleProvider(_mixer);
+			_output.Init(_volume);
 			_output.Play();
 		}
 		public async Task PlaySound(Sound Sound)
@@ -88,7 +90,7 @@ namespace Soundboard.Net.Manager
 		{
 			_output.Dispose();
 			_output = new DirectSoundOut(ExtractGuidFromSoundObject(Output));
-			_output.Init(_mixer);
+			_output.Init(_volume);
 			_output.Play();
 		}
 		private Guid ExtractGuidFromSoundObject(SoundOutputDevices Device)
@@ -101,6 +103,13 @@ namespace Soundboard.Net.Manager
 		private SoundOutputDevices GetDefaultDevice()
 		{
 			return _allDevices.Where(Device => Device.IsDefault == true).First();
+		}
+		public void ChangeVolume(Double Volume)
+		{
+			double DownsizedVolume = Volume / 100;
+			float CorrectVolume = (float)DownsizedVolume;
+
+			_volume.Volume = CorrectVolume;
 		}
 	}
 }
