@@ -33,7 +33,6 @@ namespace Soundboard.Net.Manager
 		{
 			return _allSounds;
 		}
-
 		private void InitAudioEngine()
 		{
 			_output = new WaveOutEvent();
@@ -42,13 +41,16 @@ namespace Soundboard.Net.Manager
 			_output.Init(_mixer);
 			_output.Play();
 		}
-
 		public async Task PlaySound(Sound Sound)
 		{
 			using(AudioFileReader AudioReader = new AudioFileReader(Sound.AbsolutePath))
 			{
 				_mixer.AddMixerInput(AudioReader.ToWaveProvider());
 			}
+		}
+		public async Task<IEnumerable<SoundOutputDevices>> GetOutputDevices()
+		{
+			return new List<SoundOutputDevices>();
 		}
 	}
 }
